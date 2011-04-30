@@ -70,8 +70,15 @@ class MARCReader(Reader):
     def next(self):
         """
         To support iteration. 
+        
+        Some marc files separate records with a \r\n
+        
         """
-        first5 = self.file_handle.read(5)
+        first2 = self.file_handle.read(2)        
+        while first2 == "\r\n":
+            first2 = self.file_handle.read(2)        
+        first5 = first2 + self.file_handle.read(3)
+        
         if not first5:
             raise StopIteration
         if len(first5) < 5:
