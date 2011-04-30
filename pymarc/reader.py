@@ -79,7 +79,7 @@ class MARCReader(Reader):
             first2 = self.file_handle.read(2)        
         first5 = first2 + self.file_handle.read(3)
         
-        if not first5:
+        if not first5 or first5 == "\x00\x00\x00\x00\x00":
             raise StopIteration
         if len(first5) < 5:
             raise RecordLengthInvalid
