@@ -35,7 +35,7 @@ class Field(object):
             self.tag = '%03s' % tag
 
         # assume controlfields are numeric only; replicates ruby-marc behavior 
-        if self.tag < '010' and self.tag.isdigit():
+        if self.is_control_field():
             self.data = data
         else: 
             self.indicator1, self.indicator2 = self.indicators = indicators
@@ -107,18 +107,44 @@ class Field(object):
 
     def get_subfields(self, *codes):
         """
-        get_subfields() accepts one or more subfield codes and returns
-        a list of subfield values.  The order of the subfield values
-        in the list will be the order that they appear in the field.
-
+        get_subfields() accepts one or more subfield codes and returns a
+        list of subfield values. The order of the subfield values in the
+        list will be the order that they appear in the field. If no codes
+        are passed, all fields are returned.
+        
             print field.get_subfields('a')
             print field.get_subfields('a', 'b', 'z')
         """
+        if len(codes) == 0:
+            return [subfield[1] for subfield in self]
+
         values = []
         for subfield in self:
             if subfield[0] in codes:
                 values.append(subfield[1])
         return values 
+
+    def get_subfield_tuples(self, *codes):
+        """
+        get_subfield_tuples() accepts zero or more subfield codes and
+        returns a list of matching subfield code, value tuples. The order
+        of the subfield values in the list will be the order that they
+        appear in the field. If no codes are passed, all fields are
+        returned.
+        
+            print field.get_subfield_tuples('a')
+            print field.get_subfield_tuples('a', 'b', 'z')
+        """
+        
+        if len(codes) == 0:
+            return [subfield for subfield in self]
+        
+        values = []
+        for subfield in self:
+            if subfield[0] in codes:
+                values.append(subfield)
+        return values 
+
 
     def add_subfield(self, code, value):
         """
